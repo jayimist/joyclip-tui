@@ -13,7 +13,7 @@ A generic Joyful Clipboard TUI program. (You may find bugs n' stuff in this, exp
     - Q - Copies a clip.
     - A - Adds a clip manually.
     - E - Deletes clip.
-    - D - Searches for a clip. (NOT IMPLEMENTED)
+    - D - Searches for a clip. (SEMI-IMPLEMENTED BUGGY!)
     - Ctrl+C - Exits the program.
   - In search mode to clear searching go into the search bar and press enter to default to all clips shown.
 

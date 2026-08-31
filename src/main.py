@@ -1,11 +1,14 @@
 import sys, json, sys, tty, termios
 from board import Board
 
-VERSION = "0.1.1-alpha"
+with open("VERSION", "r") as f:
+    data = f.readlines()
+    VERSION = data[0].strip("\n")
 BLOATED_HEADER = False
 args = sys.argv
 program_state = "main"
 board = Board()
+boardaction = "Nothin'"
 
 
 
@@ -13,14 +16,18 @@ board = Board()
 def clear():
     print("\033[H\033[2J", end="")
 
-def print_header(more_info: bool=False):
+def print_title():
     print(f'''JoyClip-TUI • jayimist@github • v{VERSION}
 A generic Joyful Clipboard TUI program. (You may find bugs n' stuff in this.)
 ''')
+
+def print_header(more_info: bool=False):
+    print_title()
+
     if BLOATED_HEADER and not more_info:
         print('''How to use the TUI:
   [Q] Copy [W] Up   [E] Delete [Ctrl+C] Exit
-  [A] Add  [S] Down [D] Search (SEMI-IMPLEMENTED BUGGY!)
+  [A] Add  [S] Down [D] Search (Implemented but Buggy)
 ''')
     elif more_info:
         print('''CLI arguments:
@@ -35,13 +42,12 @@ How to use the TUI:
     • Q - Copies a clip.
     • A - Adds a clip manually.
     • E - Deletes clip.
-    • D - Searches for a clip. (SEMI-IMPLEMENTED BUGGY!)
+    • D - Searches for a clip. (Implemented but Buggy)
     • Ctrl+C - Exits the program.
-  • In search mode to clear searching go into the search bar and press enter to default to all clips shown.
-''')
+  • In search mode to clear searching go into the search bar and press enter to default to all clips shown.''')
 
 def print_board():
-    print("Board - No action. (Action status not fully implemented.)")
+    print(f"Board - {boardaction}")
 
     for i, clip_index in enumerate(board.visibleclips):
         text = board.clips[clip_index]
@@ -51,9 +57,6 @@ def print_board():
             continue
 
         print(f" - {text}")
-
-def print_version():
-    print(f"JoyClip-TUI • jayimist@github • v{VERSION}")
 
 def getkey():
     fd = sys.stdin.fileno()
@@ -74,7 +77,7 @@ if len(args) > 1:
         print_header(True)
         exit(0)
     if args[1] in ("version", "v"):
-        print_version()
+        print_title()
         exit(0)
 
 
@@ -94,10 +97,13 @@ while program_state:
             board.move(-1)
         elif key == "q":
             board.copy()
+            boardaction = "Copied clip"
         elif key == "a":
             program_state = "adding"
+            boardaction = "Added clip manually"
         elif key == "e":
             board.delete()
+            boardaction = "Deleted clip manually"
         elif key == "d":
             program_state = "searching"
         elif key == "\x03": # ctrl+c
